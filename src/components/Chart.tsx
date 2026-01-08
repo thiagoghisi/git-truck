@@ -550,9 +550,10 @@ function NodeText({
   const isBubbleChart = isCircularNode(d)
 
   // Scale font size to compensate for viewBox scaling
-  // Base sizes: text-sm = 14px, text-xs = 12px
+  // Use fourth root for gentle scaling (sqrt was still too aggressive)
+  // At scale 1: 14px, scale 4: 20px, scale 16: 28px
   const baseFontSize = isTree(d.data) ? 14 : 12
-  const scaledFontSize = baseFontSize * renderScale
+  const scaledFontSize = baseFontSize * Math.pow(renderScale, 0.25)
 
   if (children === null) return null
 
@@ -592,7 +593,7 @@ function NodeText({
       {isTree(d.data) && isBubbleChart ? (
         <text
           className="pointer-events-none fill-none stroke-gray-100 font-mono font-bold dark:stroke-gray-800"
-          style={{ fontSize: scaledFontSize, strokeWidth: 7 * renderScale }}
+          style={{ fontSize: scaledFontSize, strokeWidth: 7 * Math.pow(renderScale, 0.25) }}
           strokeLinecap="round"
         >
           <textPath {...textPathBaseProps}>{children}</textPath>
